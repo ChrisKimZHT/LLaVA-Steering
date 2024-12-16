@@ -18,11 +18,11 @@ Our research initially reveals a persistent imbalance between these modalities, 
 To validate our solution, we composed LLaVA Steering, a suite of models integrated with the proposed MoReS method. Evaluation results show that the composed LLaVA Steering models require, on average, 500 times fewer trainable parameters than LoRA needs while still achieving comparable performance across three visual benchmarks and eight visual question-answering tasks.
 Last, we present the LLaVA Steering Factory, an in-house developed platform that enables researchers to quickly customize various MLLMs with component-based architecture for seamlessly integrating state-of-the-art models, and evaluate their intrinsic modality imbalance. This open-source project enriches the research community to gain a deeper understanding of MLLMs.
 <p align="center">
-  <img src="Topics/LLaVA-Steering/figs/modelarch.pdf" width="800" />
+  <img src="Topics/LLaVA-Steering/figs/modelarch.png" width="800" />
 </p>
 
-## Getting Started
-### Installation
+
+## Installation
 
 **Step 1: Clone LLaVA-Steering repository:**
 
@@ -48,9 +48,33 @@ pip install -r requirements.txt
 ```
 
 
-### Quick Start
+## Quick Start
 
-#### Datasets Preparation
+### 1. Datasets Preparation
 
-Please follow the [MMSeg data preparation document](https://github.com/open-mmlab/mmsegmentation/blob/main/docs/en/user_guides/2_dataset_prepare.md) to download and pre-process the datasets including PASCAL VOC, PASCAL Context, Cityscapes, ADE20k, COCO Object and COCO-Stuff164k.
-We provide some dataset processing scripts in the `process_dataset.sh`.
+Please refer to the [Data Preparation](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) section in LLaVA [Documenation](https://github.com/haotian-liu/LLaVA).
+
+### 2. Train
+#### Pretraining
+#### Visual Instruction Tuning
+The scripts will be released shortly after completing the code cleaning process.
+### 3. Evaluation
+The scripts will be released shortly after completing the code cleaning process.
+
+## Custom Your MLLM!
+In the LLaVA Steering Factory, we establish standardized training and evaluation pipelines, along with flexible data preprocessing and model configurations. Our framework allows researchers to easily customize their models with various training strategies without the need for additional coding. We implement all mainstream LLMs and vision encoders, including multiple PEFT methods and our proposed MoReS technique. Furthermore, we support a wide range of benchmarks and integrate our intrinsic modality imbalance evaluation. The goal of the LLaVA Steering Factory is to facilitate research in MLLMs, particularly in addressing intrinsic modality imbalance to optimize visual instruction tuning.
+<p align="center">
+  <img src="Topics/LLaVA-Steering/figs/factory.png" width="800" />
+</p>
+
+### Model Zoo
+which are trained using LLaVA Steering Factory.
+### Train Recipe
+
+The scripts will be released shortly after completing the code cleaning process.
+
+## Contact
+If you have any questions, feel free to either initiate an *Issue* or contact us by email (*bijinhe@outlook.com*).
+
+## ❤️ Community efforts
+* Our codebase is built upon the [LLaVA](https://github.com/haotian-liu/LLaVA) and [TinyLLaVA_Factory](https://github.com/TinyLLaVA/TinyLLaVA_Factory?tab=readme-ov-file). Great work!
