@@ -18,7 +18,7 @@ Our research initially reveals a persistent imbalance between these modalities, 
 To validate our solution, we composed LLaVA Steering, a suite of models integrated with the proposed MoReS method. Evaluation results show that the composed LLaVA Steering models require, on average, 500 times fewer trainable parameters than LoRA needs while still achieving comparable performance across three visual benchmarks and eight visual question-answering tasks.
 Last, we present the LLaVA Steering Factory, an in-house developed platform that enables researchers to quickly customize various MLLMs with component-based architecture for seamlessly integrating state-of-the-art models, and evaluate their intrinsic modality imbalance. This open-source project enriches the research community to gain a deeper understanding of MLLMs.
 <p align="center">
-  <img src="Topics/LLaVA-Steering/figs/modelarch.png" width="800" />
+  <img src="./figs/modelarch.png" width="800" />
 </p>
 
 
@@ -64,7 +64,7 @@ The scripts will be released shortly after completing the code cleaning process.
 ## Custom Your MLLM!
 In the LLaVA Steering Factory, we establish standardized training and evaluation pipelines, along with flexible data preprocessing and model configurations. Our framework allows researchers to easily customize their models with various training strategies without the need for additional coding. We implement all mainstream LLMs and vision encoders, including multiple PEFT methods and our proposed MoReS technique. Furthermore, we support a wide range of benchmarks and integrate our intrinsic modality imbalance evaluation. The goal of the LLaVA Steering Factory is to facilitate research in MLLMs, particularly in addressing intrinsic modality imbalance to optimize visual instruction tuning.
 <p align="center">
-  <img src="Topics/LLaVA-Steering/figs/factory.png" width="800" />
+  <img src="./figs/factory.png" width="800" />
 </p>
 
 ### Model Zoo
