@@ -9,7 +9,8 @@
 </div>
 
 ## News
-* **` Dec. 16rd, 2024`**: We release paper for LLaVA-Steering.
+* **` Feb. 15th, 2025`**: The core codes have been released! More models and details will be released！
+* **` Dec. 16th, 2024`**: We release paper for LLaVA-Steering.
 * Code will be released asap after internal review.
 
 ## Abstract
@@ -35,32 +36,38 @@ cd LLaVA-Steering
 
 ***Create and activate a new conda environment***
 
-```bash
-conda create -n LLaVASteering
-conda activate LLaVASteering
+```Shell
+conda create -n llava_steer python=3.10 -y
+conda activate llava_steer
 ```
-
 ***Install Dependencies***
 
 
 ```bash
-pip install -r requirements.txt
+pip install --upgrade pip  # enable PEP 660 support
+pip install -e .
+pip install flash-attn==2.5.6
+pip install --no-deps pyreft==0.0.6 pyvene==0.1.2 evaluate==0.4.2 
 ```
 
 
 ## Quick Start
 
 ### 1. Datasets Preparation
+- Please refer to the [Data Preparation](https://tinyllava-factory.readthedocs.io/en/latest/Prepare%20Datasets.html) section in tinyllava's [Documenation](https://tinyllava-factory.readthedocs.io/en/latest/).
 
-Please refer to the [Data Preparation](https://huggingface.co/datasets/liuhaotian/LLaVA-Instruct-150K/blob/main/llava_v1_5_mix665k.json) section in LLaVA [Documenation](https://github.com/haotian-liu/LLaVA).
+- Please refer to the [Evaluation](https://tinyllava-factory.readthedocs.io/en/latest/Evaluation.html) section in TinyLlaVA's [Documenation](https://tinyllava-factory.readthedocs.io/en/latest/Evaluation.html).
 
 ### 2. Train
 #### Pretraining
+- Check pretrain script [HERE](scripts/exp/exp_1st_stage_pretrain)
 #### Visual Instruction Tuning
-The scripts will be released shortly after completing the code cleaning process.
+- Check 2nd-stage finetune script [HERE](scripts/exp/exp_2nd_stage_finetune)
+- Check 3rd-stage finetune script [HERE](scripts/exp/exp_3rd_stage_finetune)
 ### 3. Evaluation
-The scripts will be released shortly after completing the code cleaning process.
-
+- Download the checkpoint from our huggingface or you have trained your own model.
+- Specify the ckpt-dir path and data-path in the scripts [HERE](scripts/eval).
+- Simply run!
 ## Custom Your MLLM!
 In the LLaVA Steering Factory, we establish standardized training and evaluation pipelines, along with flexible data preprocessing and model configurations. Our framework allows researchers to easily customize their models with various training strategies without the need for additional coding. We implement all mainstream LLMs and vision encoders, including multiple PEFT methods and our proposed MoReS technique. Furthermore, we support a wide range of benchmarks and integrate our intrinsic modality imbalance evaluation. The goal of the LLaVA Steering Factory is to facilitate research in MLLMs, particularly in addressing intrinsic modality imbalance to optimize visual instruction tuning.
 <p align="center">
@@ -68,10 +75,10 @@ In the LLaVA Steering Factory, we establish standardized training and evaluation
 </p>
 
 ### Model Zoo
-which are trained using LLaVA Steering Factory.
-### Train Recipe
+Currently, there's one 2-stage trained model of MoReS. More will be released! Stay tuned!
 
-The scripts will be released shortly after completing the code cleaning process.
+- [MoReS-llava-steering-tinyllava_phi2](https://huggingface.co/BroJun/MoReS-llava-steering)
+
 
 ## Contact
 If you have any questions, feel free to either initiate an *Issue* or contact us by email (*bijinhe@outlook.com*).
