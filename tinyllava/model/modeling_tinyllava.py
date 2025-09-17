@@ -235,7 +235,6 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
         kwargs = {}
         kwargs['vision_feature_layer'] = self.config.vision_feature_layer
         kwargs['vision_feature_select_strategy'] = self.config.vision_feature_select_strategy
-        images = images.to(device=self.device)
         image_features = self.vision_tower(images, **kwargs)
         image_features = self.connector(image_features)
         return image_features
@@ -261,10 +260,16 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
         if vision_tower is None or images is None or input_ids.shape[1] == 1:
             return input_ids, position_ids, attention_mask, past_key_values, None, labels
 
-        
-        image_features = self.encode_images(images)
-        # add one dimension
-        image_features = image_features.unsqueeze(1)
+        if type(images) is list:
+            # skip `to_data_list`
+            assert len(images) == input_ids.shape[0]
+        else:
+            images = images.to_data_list()
+
+        image_features = []
+        for image in images:
+            image_features.append(self.encode_images(image))
+
 
         # TODO: image start / end is not implemented here to support pretraining.
         if getattr(self.config, 'tune_mm_mlp_adapter', False):
