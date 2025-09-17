@@ -33,6 +33,13 @@ class LazySupervisedDataset(Dataset):
         list_data_dict = []
         for ele in original_list:
             graph, question, answer = ele['graph'], ele['question'], ele['answer']
+
+            if len(graph['node_feat']) == 0 or len(graph['edge_feat']) == 0 or len(graph['edge_index']) == 0:
+                # print("Warning: empty graph found, skip")
+                # print(ele)
+                # print("=" * 32)
+                continue
+
             list_data_dict.append({
                 "conversations": [
                     {"from": "human", "value": "<image>\n" + question},
