@@ -45,5 +45,10 @@ model_name_to_module_path_mapping = {
         "embed_tokens": "model.embed_tokens",
         "layers": "model.layers",
         "lm_head": "lm_head"
+    },
+    'TinyLlama/TinyLlama-1.1B-Chat-v1.0': {
+        "embed_tokens": "model.embed_tokens",
+        "layers": "model.layers",
+        "lm_head": "lm_head"
     }
 }

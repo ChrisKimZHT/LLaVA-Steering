@@ -506,12 +506,13 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
 
 
     def generate_mores_pos_configs(self, mores_config, model, training_arguments):
-        if model.config.vision_feature_select_strategy == 'patch':
-            img_embed_token_len = (model.vision_tower.config.image_size // model.vision_tower.config.patch_size) ** 2 - 1
-        elif model.config.vision_feature_select_strategy == 'cls_patch':
-            img_embed_token_len = (model.vision_tower.config.image_size // model.vision_tower.config.patch_size) ** 2
-        else:
-            raise ValueError(f"Unexpected select feature: {model.config.vision_feature_select_strategy}")
+        img_embed_token_len = 1
+        # if model.config.vision_feature_select_strategy == 'patch':
+        #     img_embed_token_len = (model.vision_tower.config.image_size // model.vision_tower.config.patch_size) ** 2 - 1
+        # elif model.config.vision_feature_select_strategy == 'cls_patch':
+        #     img_embed_token_len = (model.vision_tower.config.image_size // model.vision_tower.config.patch_size) ** 2
+        # else:
+        #     raise ValueError(f"Unexpected select feature: {model.config.vision_feature_select_strategy}")
         configs2upate = {
             'num_interventions': {model_type: len(config_['representations']) for model_type, config_ in mores_config.items() if 'representations' in config_},
             'img_embed_token_len': img_embed_token_len

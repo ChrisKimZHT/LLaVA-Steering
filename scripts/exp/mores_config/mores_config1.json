@@ -5,7 +5,7 @@
         "low_rank_dimension": 4,
         "intervention": {
             "type": "mores",
-            "embed_dim": 2560,
+            "embed_dim": 2048,
             "low_rank_dimension": 4,
             "dropout": 0.05
         }}
