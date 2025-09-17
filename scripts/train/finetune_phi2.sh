@@ -37,15 +37,10 @@ MODEL_MAX_LENGTH="${27:-None}"
 LORA_R="${28:-128}"
 LORA_ALPHA="${29:-256}"
 
-GIN_NUM_LAYERS="${30:-5}"
-GIN_HIDDEN_DIM="${31:-300}"
-GRAPH_DROP_RATIO="${32:-0.1}"
-GRAPH_POOLING="${33:-mean}"
-GRAPH_INIT_CHECKPOINT="${34:-None}"
 
 TINYLLAVA_VERSION_NAME=$(echo $TINYLLAVA_VERSION | cut -d'/' -f2)
 
-cmd="deepspeed --include localhost:7 --master_port 25565 tinyllava/train/train.py \
+cmd="deepspeed --include localhost:0,1,2,3 --master_port 29524 tinyllava/train/train.py \
     --deepspeed ./scripts/zero2.json \
     --data_path  $DATA_PATH \
     --image_folder $IMAGE_PATH \
@@ -76,14 +71,9 @@ cmd="deepspeed --include localhost:7 --master_port 25565 tinyllava/train/train.p
     --gradient_checkpointing True \
     --dataloader_num_workers 8 \
     --lazy_preprocess True \
-    --report_to tensorboard \
+    --report_to wandb \
     --tokenizer_use_fast False \
-    --run_name $RUN_NAME \
-    --gin_num_layers $GIN_NUM_LAYERS \
-    --gin_hidden_dim $GIN_HIDDEN_DIM \
-    --graph_drop_ratio $GRAPH_DROP_RATIO \
-    --graph_pooling $GRAPH_POOLING \
-    --graph_init_checkpoint $GRAPH_INIT_CHECKPOINT"
+    --run_name $RUN_NAME"
 
 if [ "$MORES_CONFIG_PATH" != "None" ]; then
     cmd="$cmd --mores_config_path \"$MORES_CONFIG_PATH\""
