@@ -4,6 +4,8 @@ import json
 from typing import Dict,  Sequence, TYPE_CHECKING
 from PIL import Image, ImageFile
 import os
+import pickle
+from torch_geometric.data import Batch, Data
 
 from .text_preprocess import TextPreprocess, TextPreprocessMoReS
 from .image_preprocess import ImagePreprocess
@@ -26,7 +28,18 @@ class LazySupervisedDataset(Dataset):
                  tokenizer: transformers.PreTrainedTokenizer,
                  data_args: DataArguments):
         super(LazySupervisedDataset, self).__init__()
-        list_data_dict = json.load(open(data_path, "r"))
+        original_list = pickle.load(open(data_path, "rb"))
+
+        list_data_dict = []
+        for ele in original_list:
+            graph, question, answer = ele['graph'], ele['question'], ele['answer']
+            list_data_dict.append({
+                "conversations": [
+                    {"from": "human", "value": "<image>\n" + question},
+                    {"from": "gpt", "value": answer}
+                ],
+                "image": graph
+            })
 
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
@@ -56,19 +69,23 @@ class LazySupervisedDataset(Dataset):
         return length_list
 
     def __getitem__(self, i) -> Dict[str, torch.Tensor]:
+        # sources = self.list_data_dict[i]
+        # data_dict = self.text_preprocess(copy.deepcopy(sources["conversations"]))
+        # if 'image' in sources:
+        #     image_file = self.list_data_dict[i]['image']
+        #     image_folder = self.data_args.image_folder
+        #     image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
+        #     image = self.image_preprocess(image)
+        #     data_dict['image'] = image
+        # elif self.data_args.is_multimodal:
+        #     # image does not exist in the data, but the model is multimodal
+        #     # print(f'{i}:{sources}')
+        #     crop_size = getattr(self.data_args.image_processor, 'crop_size', getattr(self.data_args.image_processor, 'size'))
+        #     data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
         sources = self.list_data_dict[i]
         data_dict = self.text_preprocess(copy.deepcopy(sources["conversations"]))
-        if 'image' in sources:
-            image_file = self.list_data_dict[i]['image']
-            image_folder = self.data_args.image_folder
-            image = Image.open(os.path.join(image_folder, image_file)).convert('RGB')
-            image = self.image_preprocess(image)
-            data_dict['image'] = image
-        elif self.data_args.is_multimodal:
-            # image does not exist in the data, but the model is multimodal
-            # print(f'{i}:{sources}')
-            crop_size = getattr(self.data_args.image_processor, 'crop_size', getattr(self.data_args.image_processor, 'size'))
-            data_dict['image'] = torch.zeros(3, crop_size['height'], crop_size['width'])
+        data_dict['image'] = sources['image']
+
         return data_dict
 
 
@@ -119,12 +136,22 @@ class DataCollatorForSupervisedDataset(object):
             batch['len_two_pos_configs'] = torch.tensor(len_two_pos_configs)
 
         if 'image' in instances[0]:
-            images = [instance['image'] for instance in instances]
-            if all(x is not None and x.shape == images[0].shape for x in images):
-                batch['images'] = torch.stack(images)
-            else:
-                batch['images'] = images
-
+            # images = [instance['image'] for instance in instances]
+            # if all(x is not None and x.shape == images[0].shape for x in images):
+            #     batch['images'] = torch.stack(images)
+            # else:
+            #     batch['images'] = images
+            images = []
+            for instance in instances:
+                graph = instance['image']
+                converted_graph = Data(
+                    x=torch.asarray(graph['node_feat']),
+                    edge_attr=torch.asarray(graph['edge_feat']),
+                    edge_index=torch.asarray(graph['edge_index']),
+                )
+                images.append(converted_graph)
+            batch['images'] = Batch.from_data_list(images)
+        
         return batch
 
 

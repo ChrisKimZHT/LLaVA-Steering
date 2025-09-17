@@ -53,6 +53,12 @@ class ModelArguments:
     tokenizer_use_fast: bool = field(default=False)
     tokenizer_padding_side: str = field(default='right')
 
+    gin_num_layers: int = field(default=5)
+    gin_hidden_dim: int = field(default=300)
+    graph_drop_ratio: float = field(default=0.1)
+    graph_pooling: str = field(default='mean')
+    graph_init_checkpoint: Optional[str] = field(default=None)
+
 
 @dataclass
 class DataArguments:

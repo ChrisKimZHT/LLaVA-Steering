@@ -37,6 +37,12 @@ class TinyLlavaConfig(PretrainedConfig):
         tune_type_connector = 'frozen',
         tune_type_vision_tower = 'frozen',
         tune_vision_tower_from_layer = -1,
+
+        gin_num_layers = 5,
+        gin_hidden_dim = 300,
+        graph_drop_ratio = 0.1,
+        graph_pooling = 'mean',
+        graph_init_checkpoint = None,
         
         **kwargs
 
@@ -68,6 +74,13 @@ class TinyLlavaConfig(PretrainedConfig):
         self.tokenizer_use_fast = tokenizer_use_fast
         self._load_text_config(text_config)
         self._load_vision_config(vision_config)
+
+        self.gin_num_layers = gin_num_layers
+        self.gin_hidden_dim = gin_hidden_dim
+        self.vision_hidden_size = gin_hidden_dim
+        self.graph_drop_ratio = graph_drop_ratio
+        self.graph_pooling = graph_pooling
+        self.graph_init_checkpoint = graph_init_checkpoint
             
         super().__init__(**kwargs)
     
@@ -108,6 +121,10 @@ class TinyLlavaConfig(PretrainedConfig):
     
     
     def _load_vision_config(self, vision_config=None):
+        if self.vision_model_name_or_path == "molecule_stm":
+            self.vision_config = None
+            return
+
         if self.vision_model_name_or_path is None or self.vision_model_name_or_path == '':
             self.vision_config = CONFIG_MAPPING['clip_vision_model'](
                 intermediate_size=4096,

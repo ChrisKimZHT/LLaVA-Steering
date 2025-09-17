@@ -69,7 +69,7 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
         super().__init__(config)
 
         self.language_model = LLMFactory(config.llm_model_name_or_path)[0](config.text_config)
-        self.vision_tower = VisionTowerFactory(config.vision_model_name_or_path)(config.vision_config)
+        self.vision_tower = VisionTowerFactory(config.vision_model_name_or_path)(config)
         self.connector = ConnectorFactory(config.connector_type)(config)
 
         (Tokenizer, post_load) = LLMFactory(config.llm_model_name_or_path)[1]
@@ -235,7 +235,7 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
         kwargs = {}
         kwargs['vision_feature_layer'] = self.config.vision_feature_layer
         kwargs['vision_feature_select_strategy'] = self.config.vision_feature_select_strategy
-        images = images.to(device=self.device, dtype=self.dtype)
+        images = images.to(device=self.device)
         image_features = self.vision_tower(images, **kwargs)
         image_features = self.connector(image_features)
         return image_features
@@ -263,6 +263,8 @@ class TinyLlavaForConditionalGeneration(TinyLlavaPreTrainedModel):
 
         
         image_features = self.encode_images(images)
+        # add one dimension
+        image_features = image_features.unsqueeze(1)
 
         # TODO: image start / end is not implemented here to support pretraining.
         if getattr(self.config, 'tune_mm_mlp_adapter', False):
