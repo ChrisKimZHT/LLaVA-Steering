@@ -101,6 +101,12 @@ class TinyLlavaConfig(PretrainedConfig):
         self.tokenizer_use_fast = getattr(config, 'tokenizer_use_fast', False)
         self.tokenizer_model_max_length = getattr(config, 'model_max_length', 2048)
         self.tokenizer_padding_side = getattr(config, 'tokenizer_padding_side', 'right')
+
+        self.gin_num_layers = getattr(config, 'gin_num_layers', 5)
+        self.gin_hidden_dim = getattr(config, 'gin_hidden_dim', 300)
+        self.graph_drop_ratio = getattr(config, 'graph_drop_ratio', 0.1)
+        self.graph_pooling = getattr(config, 'graph_pooling', 'mean')
+        self.graph_init_checkpoint = getattr(config, 'graph_init_checkpoint', None)
         
         self._load_text_config()
         self._load_vision_config()
