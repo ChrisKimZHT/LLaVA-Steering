@@ -50,5 +50,10 @@ model_name_to_module_path_mapping = {
         "embed_tokens": "model.embed_tokens",
         "layers": "model.layers",
         "lm_head": "lm_head"
+    },
+    '/home/public_space/zhangxiaohong/yintaoo/vicuna-7b': {
+        "embed_tokens": "model.embed_tokens",
+        "layers": "model.layers",
+        "lm_head": "lm_head"
     }
 }
