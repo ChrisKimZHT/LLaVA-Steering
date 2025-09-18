@@ -72,7 +72,8 @@ class LoRATrainingRecipe(BaseTrainingRecipe):
             os.makedirs(vision_tower_output_dir, exist_ok=True)
             vision_tower_output_path = os.path.join(self.training_arguments.output_dir, 'vision_tower/pytorch_model.bin')
             torch.save(vision_tower_state_dict, vision_tower_output_path)
-            model.config.vision_config.save_pretrained(vision_tower_output_dir, from_pt=True)
+            if model.config.vision_config is not None:
+                model.config.vision_config.save_pretrained(vision_tower_output_dir, from_pt=True)
         #save connector base params
         connector_state_dict = get_peft_state_non_lora_maybe_zero_3(model.connector.named_parameters(),  False)
         if trainer.args.local_rank == 0 or trainer.args.local_rank == -1:
