@@ -250,6 +250,8 @@ class MoleculeSTM(VisionTower):
             molecule_node_model=molecule_node_model,
             init_checkpoint=cfg.graph_init_checkpoint,
         )
+
+        self._vision_tower = self.molecule_stm
     
     def load_model(self, vision_tower_name, **kwargs):
         return
