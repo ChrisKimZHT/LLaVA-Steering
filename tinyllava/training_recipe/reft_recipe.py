@@ -71,7 +71,8 @@ class MoReSTrainingRecipe(BaseTrainingRecipe):
             os.makedirs(vision_tower_output_dir, exist_ok=True)
             vision_tower_output_path = os.path.join(self.training_arguments.output_dir, 'vision_tower/pytorch_model.bin')
             torch.save(vision_tower_state_dict, vision_tower_output_path)
-            model.config.vision_config.save_pretrained(vision_tower_output_dir, from_pt=True)
+            if model.config.vision_config is not None:
+                model.config.vision_config.save_pretrained(vision_tower_output_dir, from_pt=True)
             print(f"The vision tower has been successfully saved in {vision_tower_output_dir}.")
 
         #save connector base params
