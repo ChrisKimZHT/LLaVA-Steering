@@ -1,21 +1,22 @@
 #!/bin/bash
-deepspeed --include localhost:7 --master_port 25565 tinyllava/train/train.py \
+deepspeed --include localhost:4,5,6,7 --master_port 25565 tinyllava/train/train.py \
     --deepspeed ./scripts/zero2.json \
     --data_path /home/public_space/zhangxiaohong/public_user/PubChemSFT/train.pkl \
-    --output_dir /home/public_space/zhangxiaohong/public_user/LLaVA-Steering/test \
-    --run_name test \
+    --output_dir /home/public_space/zhangxiaohong/public_user/LLaVA-Steering/test-vicuna-mores \
+    --run_name test-vicuna-mores \
     --is_multimodal True \
     --mm_vision_select_layer -2 \
     --image_aspect_ratio square \
     --attn_implementation flash_attention_2 \
-    --fp16 True \
+    --fp16 False \
+    --bf16 True \
     --training_recipe mores \
     --tune_type_llm mores \
     --tune_type_connector full \
-    --tune_type_vision_tower frozen \
+    --tune_type_vision_tower full \
     --tune_vision_tower_from_layer 0 \
     --conv_version llama \
-    --model_name_or_path TinyLlama/TinyLlama-1.1B-Chat-v1.0 \
+    --model_name_or_path /home/public_space/zhangxiaohong/yintaoo/vicuna-7b \
     --vision_tower molecule_stm \
     --connector_type mlp2x_gelu \
     --gin_num_layers 5 \
@@ -35,8 +36,8 @@ deepspeed --include localhost:7 --master_port 25565 tinyllava/train/train.py \
     --gradient_accumulation_steps 1 \
     --evaluation_strategy no \
     --epoch_to_save 1 \
-    --save_step 2000 \
-    --learning_rate 1e-3 \
+    --save_step 1000 \
+    --learning_rate 8e-5 \
     --weight_decay 0. \
     --warmup_ratio 0.03 \
     --lr_scheduler_type cosine \
@@ -47,4 +48,5 @@ deepspeed --include localhost:7 --master_port 25565 tinyllava/train/train.py \
     --lazy_preprocess True \
     --report_to tensorboard \
     --tokenizer_use_fast False
-
+#    --lora_r 16 \
+#    --lora_alpha 32 \
