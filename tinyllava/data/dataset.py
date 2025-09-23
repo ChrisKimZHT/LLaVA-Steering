@@ -19,6 +19,7 @@ from torch.utils.data import Dataset
 
 from .smiles2graph import smiles2graph
 import selfies as sf
+from tqdm import tqdm
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -55,34 +56,39 @@ class LazySupervisedDataset(Dataset):
 
         ##############################################################################################################
 
-        with open(data_path, 'r') as f:
-            json_data = json.load(f)
+        # with open(data_path, 'r') as f:
+        #     json_data = json.load(f)
 
-        list_data_dict = []
-        for ele in json_data:
-            try:
-                molecule_selfies = ele['input']
-                molecule_smiles = sf.decoder(molecule_selfies)
-                graph = smiles2graph(molecule_smiles)
-            except:
-                print("Warning: invalid molecule found, skip")
-                continue
+        # list_data_dict = []
+        # for ele in tqdm(json_data):
+        #     try:
+        #         molecule_selfies = ele['input']
+        #         molecule_smiles = sf.decoder(molecule_selfies)
+        #         graph = smiles2graph(molecule_smiles)
+        #     except:
+        #         print("Warning: invalid molecule found, skip")
+        #         continue
 
-            if len(graph['node_feat']) == 0 or len(graph['edge_feat']) == 0 or len(graph['edge_index']) == 0:
-                # print("Warning: empty graph found, skip")
-                # print(ele)
-                # print("=" * 32)
-                continue
+        #     if len(graph['node_feat']) == 0 or len(graph['edge_feat']) == 0 or len(graph['edge_index']) == 0:
+        #         # print("Warning: empty graph found, skip")
+        #         # print(ele)
+        #         # print("=" * 32)
+        #         continue
 
-            question = ele['instruction']
-            answer = ele['output']
-            list_data_dict.append({
-                "conversations": [
-                    {"from": "human", "value": "<image>\n" + question},
-                    {"from": "gpt", "value": answer}
-                ],
-                "image": graph
-            })
+        #     question = ele['instruction']
+        #     answer = ele['output']
+        #     list_data_dict.append({
+        #         "conversations": [
+        #             {"from": "human", "value": "<image>\n" + question},
+        #             {"from": "gpt", "value": answer}
+        #         ],
+        #         "image": graph
+        #     })
+
+        ##############################################################################################################
+
+        with open(data_path, 'rb') as f:
+            list_data_dict = pickle.load(f)
 
         ##############################################################################################################
 
