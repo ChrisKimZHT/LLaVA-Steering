@@ -17,9 +17,11 @@ import transformers
 import torch
 from torch.utils.data import Dataset
 
-
+from .smiles2graph import smiles2graph
+import selfies as sf
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 
 class LazySupervisedDataset(Dataset):
     """Dataset for supervised fine-tuning."""
@@ -28,11 +30,43 @@ class LazySupervisedDataset(Dataset):
                  tokenizer: transformers.PreTrainedTokenizer,
                  data_args: DataArguments):
         super(LazySupervisedDataset, self).__init__()
-        original_list = pickle.load(open(data_path, "rb"))
+
+        ##############################################################################################################
+
+        # original_list = pickle.load(open(data_path, "rb"))
+
+        # list_data_dict = []
+        # for ele in original_list:
+        #     graph, question, answer = ele['graph'], ele['question'], ele['answer']
+
+        #     if len(graph['node_feat']) == 0 or len(graph['edge_feat']) == 0 or len(graph['edge_index']) == 0:
+        #         # print("Warning: empty graph found, skip")
+        #         # print(ele)
+        #         # print("=" * 32)
+        #         continue
+
+        #     list_data_dict.append({
+        #         "conversations": [
+        #             {"from": "human", "value": "<image>\n" + question},
+        #             {"from": "gpt", "value": answer}
+        #         ],
+        #         "image": graph
+        #     })
+
+        ##############################################################################################################
+
+        with open(data_path, 'r') as f:
+            json_data = json.load(f)
 
         list_data_dict = []
-        for ele in original_list:
-            graph, question, answer = ele['graph'], ele['question'], ele['answer']
+        for ele in json_data:
+            try:
+                molecule_selfies = ele['input']
+                molecule_smiles = sf.decoder(molecule_selfies)
+                graph = smiles2graph(molecule_smiles)
+            except:
+                print("Warning: invalid molecule found, skip")
+                continue
 
             if len(graph['node_feat']) == 0 or len(graph['edge_feat']) == 0 or len(graph['edge_index']) == 0:
                 # print("Warning: empty graph found, skip")
@@ -40,6 +74,8 @@ class LazySupervisedDataset(Dataset):
                 # print("=" * 32)
                 continue
 
+            question = ele['instruction']
+            answer = ele['output']
             list_data_dict.append({
                 "conversations": [
                     {"from": "human", "value": "<image>\n" + question},
@@ -47,6 +83,8 @@ class LazySupervisedDataset(Dataset):
                 ],
                 "image": graph
             })
+
+        ##############################################################################################################
 
         self.tokenizer = tokenizer
         self.list_data_dict = list_data_dict
@@ -130,7 +168,7 @@ class DataCollatorForSupervisedDataset(object):
             labels=labels,
             attention_mask=attention_mask,
         )
-        
+
         if 'intervention_locations' in instances[0] and all(ins.get("intervention_locations") is not None for ins in instances):
             intervention_locations = [instance['intervention_locations'] for instance in instances]
             if all(isinstance(x[0], list) and isinstance(x, list) and len(intervention_locations[0]) == len(x) and len(intervention_locations[0][0]) == len(x[0]) for x in intervention_locations):
@@ -158,7 +196,7 @@ class DataCollatorForSupervisedDataset(object):
                 )
                 images.append(converted_graph)
             batch['images'] = Batch.from_data_list(images)
-        
+
         return batch
 
 
